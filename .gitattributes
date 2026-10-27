@@ -1,0 +1,2 @@
+# Usa LF em todos os sistemas (o Prettier também usa LF), inclusive no Windows.
+* text=auto eol=lf
