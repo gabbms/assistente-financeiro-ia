@@ -24,13 +24,16 @@ O dono do projeto é um desenvolvedor em aprendizado: **explique decisões impor
 pnpm install
 pnpm dev            # API (localhost:3333) + web (localhost:5173)
 pnpm test           # Vitest em todos os pacotes
+pnpm db:start       # Supabase local (precisa do Docker Desktop aberto)
+pnpm test:db        # testes de banco e isolamento (precisa do db:start)
+pnpm db:reset       # recria o banco local (migrations + seed)
 pnpm lint           # ESLint
 pnpm typecheck      # tsc --noEmit em todos os pacotes
 pnpm format         # Prettier
 pnpm build
 ```
 
-Antes de considerar uma tarefa pronta, rode `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test`, os mesmos passos do CI.
+Antes de considerar uma tarefa pronta, rode `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test`, os mesmos passos do CI. Se mexeu no banco, rode também `pnpm db:reset && pnpm test:db`.
 
 ## Regras de arquitetura e segurança (obrigatórias)
 

@@ -8,7 +8,8 @@
     "build": "tsup",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:db": "vitest run --config vitest.db.config.ts"
   },
   "dependencies": {
     "@app/shared": "workspace:*",
@@ -17,6 +18,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "@types/node": "^22.20.5",
     "tsup": "^9.0.0",
     "tsx": "^4.23.15",

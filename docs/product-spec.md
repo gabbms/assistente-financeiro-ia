@@ -296,8 +296,8 @@ Configurações → "Excluir minha conta" → confirmação digitando "EXCLUIR" 
 ├─ packages/
 │  └─ shared/                   # schemas Zod, tipos, money.ts, mei.ts
 ├─ supabase/
-│  ├─ migrations/
-│  ├─ seed.sql                  # planos, categorias padrão
+│  ├─ migrations/               # inclui os dados de referência (planos, categorias padrão)
+│  ├─ seed.sql                  # só dados de desenvolvimento local
 │  └─ config.toml
 ├─ docs/
 │  ├─ product-spec.md
@@ -337,25 +337,25 @@ Convenções: chaves `uuid`; toda tabela de dados do usuário tem `user_id uuid 
 **categories**
 | id | user_id **null** (null = categoria padrão do sistema) | name | direction (`in`/`out`) | context (`PF`/`PJ`/`ANY`) | counts_as_mei_revenue bool | is_active |
 
-Categorias padrão (seed), por exemplo: PJ entrada "Vendas/Serviços" (conta como faturamento), "Outras entradas PJ" (não conta); PJ saída "DAS", "Fornecedores", "Ferramentas/Software", "Transporte", "Taxas de maquininha"; PF "Mercado", "Moradia", "Saúde", "Lazer", entre outras.
+Categorias padrão (criadas por migration, e não pelo `seed.sql`, que só roda no banco local), por exemplo: PJ entrada "Vendas/Serviços" (conta como faturamento), "Outras entradas PJ" (não conta); PJ saída "DAS", "Fornecedores", "Ferramentas/Software", "Transporte", "Taxas de maquininha"; PF "Mercado", "Moradia", "Saúde", "Lazer", entre outras.
 
 **transactions**
 | coluna | tipo | notas |
 |---|---|---|
 | id | uuid PK | |
 | user_id | uuid | |
-| account_id | uuid FK accounts | mesmo `user_id` (verificado por trigger/RLS) |
+| account_id | uuid FK accounts | mesmo `user_id`, garantido pela chave estrangeira composta `(account_id, user_id)` → `accounts(id, user_id)` |
 | occurred_on | date | |
 | amount_cents | bigint > 0 | |
 | direction | `in`/`out` | |
 | description | text | descrição original do banco |
-| category_id | uuid null | |
+| category_id | uuid null | do sistema ou do mesmo `user_id` (verificado por trigger) |
 | context | `PF`/`PJ`/null | null = pendente (conta mista) |
 | kind | `normal`/`withdrawal`/`internal_transfer` | retiradas e transferências fora dos totais de despesa |
 | source | `manual`/`ofx`/`csv` | |
 | import_batch_id | uuid null | permite desfazer a importação |
 | external_id | text null | `FITID` do OFX |
-| dedupe_hash | text | sha256(account_id, data, valor, direção, descrição normalizada) |
+| dedupe_hash | text null | calculado pela API na importação: sha256(account_id, data, valor, direção, descrição normalizada) |
 | Índices | | `unique(account_id, external_id) where external_id is not null`; `(user_id, occurred_on)`; `(account_id, dedupe_hash)` |
 
 **import_batches**

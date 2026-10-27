@@ -1,0 +1,3 @@
+-- Dados só para desenvolvimento local (roda em `pnpm db:reset`; nunca roda na nuvem).
+-- O plano e as categorias padrão ficam na migration de dados de referência,
+-- porque precisam existir em todos os ambientes.
